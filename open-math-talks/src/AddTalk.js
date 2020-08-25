@@ -1,20 +1,20 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import firebaseConfig from "./firebase/firebaseConfig";
-import firebase from "firebase";
+import { auth, db } from "./firebase/firebaseConfig";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import Bar from "./Bar";
+import Form from "react-bootstrap/Form";
+import Col from "react-bootstrap/Col";
 class AddTalk extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             title: "",
-            subtitle: "",
-            imgs: [""],
-            captions: [""],
-            content: "",
+            presenter: "",
+            description: "",
+            datetime: "",
         };
     }
 
@@ -22,45 +22,33 @@ class AddTalk extends React.Component {
         const target = event.target;
         const name = target.name;
         const value = target.value;
-        switch (name) {
-            case "img0":
-                this.setState({ imgs: [value] });
-                break;
-            case "caption0":
-                this.setState({ captions: [value] });
-                break;
-            default:
-                this.setState({ [name]: value });
-        }
+        this.setState({ [name]: value });
     };
 
     edit = (editDoc) => {
         console.log("truthy");
     };
+
     submit = (e) => {
         e.preventDefault();
-        const db = firebase.firestore();
         db.settings({
             timestampsInSnapshots: true,
         });
         const set = {
             title: this.state.title,
-
-            imgs: this.state.imgs,
-            captions: this.state.captions,
-            content: this.state.content,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            presenter: this.state.presenter,
+            description: this.state.description,
+            datetime: this.state.datetime,
+            timestamp: db.FieldValue.serverTimestamp(),
         };
 
         db.collection("talks").doc().set(set);
 
         this.setState({
-            eyeDee: undefined,
             title: "",
-            subtitle: "",
-            imgs: [""],
-            captions: [""],
-            content: "",
+            presenter: "",
+            description: "",
+            datetime: "",
         });
     };
     // componentDidUpdate(prevProps) {
@@ -73,7 +61,7 @@ class AddTalk extends React.Component {
     //             subtitle: editDoc.data().subtitle,
     //             imgs: editDoc.data().imgs,
     //             captions: editDoc.data().captions,
-    //             content: editDoc.data().content,
+    //             description: editDoc.data().description,
     //         });
     //     }
     // }
@@ -87,41 +75,72 @@ class AddTalk extends React.Component {
         return (
             <>
                 <Bar />
-                <div style={{ margin: "5rem" }}>
-                    <h2>Add Talk</h2>
-                    <Jumbotron style={{ height: "610px" }}>
-                        <form>
-                            <h3>Title: </h3>
-                            <input
-                                name="title"
-                                value={this.state.title}
-                                onChange={this.handleChange}
-                            />
+                <div
+                    style={{
+                        marginLeft: "5rem",
+                        marginRight: "5rem",
+                        marginTop: "2rem",
+                    }}
+                >
+                    <h2>Give a Talk</h2>
+                    <Jumbotron>
+                        <Form>
+                            <Form.Row>
+                                <Col>
+                                    <h4>Title: </h4>
+                                </Col>
+
+                                <Col>
+                                    <Form.Control
+                                        name="title"
+                                        value={this.state.title}
+                                        onChange={this.handleChange}
+                                    />
+                                </Col>
+                            </Form.Row>
+                            <br />
+                            <Form.Row>
+                                <Col>
+                                    <h4>Presenter: </h4>
+                                </Col>
+                                <Col>
+                                    <Form.Control
+                                        name="presenter"
+                                        value={this.state.presenter}
+                                        onChange={this.handleChange}
+                                    />
+                                </Col>
+                            </Form.Row>
 
                             <br />
-                            <h3>Description: </h3>
-                            <CKEditor
-                                editor={ClassicEditor}
-                                data={this.state.content}
-                                onInit={(editor) => {
-                                    // You can store the "editor" and use when it is needed.
-                                    console.log(
-                                        "Editor is ready to use!",
-                                        editor
-                                    );
-                                }}
-                                onChange={(event, editor) => {
-                                    const data = editor.getData();
-                                    this.setState({ content: data });
-                                }}
-                                onBlur={(event, editor) => {
-                                    //console.log("Blur.", editor);
-                                }}
-                                onFocus={(event, editor) => {
-                                    //console.log("Focus.", editor);
-                                }}
-                            />
+                            <Form.Row>
+                                <Col>
+                                    <h4>Date + Time: </h4>
+                                </Col>
+                                <Col>
+                                    <Form.Control
+                                        name="datetime"
+                                        value={this.state.datetime}
+                                        onChange={this.handleChange}
+                                    />
+                                </Col>
+                            </Form.Row>
+
                             <br />
+                            <Form.Row>
+                                <Col>
+                                    <h4>Description: </h4>
+                                </Col>
+                                <Col>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows="3"
+                                        name="description"
+                                        value={this.state.description}
+                                        onChange={this.handleChange}
+                                    />
+                                </Col>
+                            </Form.Row>
                             <br />
                             <br />
                             <br />
@@ -130,9 +149,9 @@ class AddTalk extends React.Component {
                                 variant="outline-primary"
                                 size="block"
                             >
-                                Post
+                                Add Talk
                             </Button>
-                        </form>
+                        </Form>
                     </Jumbotron>
                 </div>
             </>

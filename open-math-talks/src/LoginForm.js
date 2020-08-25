@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Button from "react-bootstrap/button"; // Imports bootstrap Button preset
-import Form from "react-bootstrap/form"; // Imports bootstrap Form Preset
+import Button from "react-bootstrap/Button"; // Imports bootstrap Button preset
+import Form from "react-bootstrap/Form"; // Imports bootstrap Form Preset
 
 export default function LoginForm(props) {
     const [isSigningUp, setIsSigningUp] = useState(props.isSigningUp);
@@ -69,8 +69,7 @@ export default function LoginForm(props) {
                             Sign Up
                         </Button>
                         <Button
-                            variant="secondary"
-                            onClick={() => setIsSigningUp(false)}
+                            variant="secondary" onClick={() => setIsSigningUp(false)}
                         >
                             Back
                         </Button>
